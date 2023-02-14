@@ -1,2 +1,3 @@
---List all databases of mu MYSQL server
+-- Lists all databases of my MySQL server.
+
 SHOW DATABASES;
