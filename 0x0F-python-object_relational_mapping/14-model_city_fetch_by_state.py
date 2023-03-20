@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 """
-a script that prints the first State object
-from the database hbtn_0e_6_usa
+return all cities from database via python
+parameters given to script: username, password, database
 """
 
 from sys import argv
 from model_state import Base, State
+from model_city import City
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -18,14 +19,13 @@ if __name__ == "__main__":
     db = argv[3]
     engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'.
                            format(user, passwd, db), pool_pre_ping=True)
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # query first python instance in database
-    first_instance = session.query(State).order_by(State.id).first()
-    if first_instance:
-        print("{:d}: {:s}".format(first_instance.id, first_instance.name))
-    else:
-        print("Nothing")
+    # query multiple tables in database and print info from tables
+    for q in session.query(State.name, City.id, City.name).filter(
+            State.id == City.state_id).order_by(City.id):
+        print("{:s}: ({:d}) {:s}".format(q[0], q[1], q[2]))
 
     session.close()
